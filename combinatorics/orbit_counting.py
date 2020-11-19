@@ -5,6 +5,7 @@ class Group: #not actually a group because it doesn't keep track of the set
 		self.num_vertices = w*h
 		self.states = s
 		self.group = self.generate_group_basis()
+		self.matched = [[False for _ in range(len(self.group))] for i in range(len(self.group))]
 		while True:
 			f = self.close_group()
 			if not f:
@@ -34,10 +35,15 @@ class Group: #not actually a group because it doesn't keep track of the set
 	def close_group(self): #find a finite subgroup of self.group
 		for i in range(0, len(self.group)):
 			for j in range(0, len(self.group)):
-				g_prime = [self.group[i][self.group[j][k]] for k in range(0, self.num_vertices)]
-				if g_prime not in self.group:
-					self.group.append(g_prime)
-					return False
+				if self.matched[i][j] == False:
+					g_prime = [self.group[i][self.group[j][k]] for k in range(0, self.num_vertices)]
+					if g_prime not in self.group:
+						self.group.append(g_prime)
+						for i in range(0, len(self.matched)):
+							self.matched[i].append(False)
+						self.matched[i][j] = True
+						self.matched.append([False]*len(self.group))
+						return False
 		return True
 
 
@@ -81,4 +87,4 @@ def solution(w, h, s):
 
 # s = Group(2, 2, 3)
 # print(len(s.group))
-print(solution(11, 10, 3))
+print(solution(4, 3, 2))
